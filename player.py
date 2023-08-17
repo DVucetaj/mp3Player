@@ -18,6 +18,14 @@ def add_song():
     #song = song.replace('/Users/donatvucetaj/code/mp3Player/audio/', '')
     #song = song.replace('.mp', '')
     song_box.insert(END, song)
+    
+# Add more than one song to the playlist
+def add_songs():
+    songs = filedialog.askopenfilenames(initialdir='audio/',
+                                      title='Choose a song',
+                                      filetypes=(('mp3 Files', '*.mp3'), ))
+    for song in songs:
+        song_box.insert(END, song)
 
 # Play Selected song
 def play():
@@ -30,6 +38,24 @@ def play():
 def stop():
     pygame.mixer.music.stop()
     song_box.selection_clear(ACTIVE)
+
+# Create Global Pause Variable paused
+global paused
+paused = False
+
+# Pause/Unpause current Song
+def pause(is_paused):
+    global paused
+    paused = is_paused
+
+    # Pause
+    if paused:
+        pygame.mixer.music.unpause()
+        paused = False
+    # Unpause
+    else:
+        pygame.mixer.music.pause()
+        paused = True
 
 # Create Playlist Box
 song_box = Listbox(root,
@@ -64,7 +90,8 @@ play_button = Button(controls_frame,
                      command=play)
 pause_button = Button(controls_frame,
                       image=pause_button_img,
-                      borderwidth=0)
+                      borderwidth=0,
+                      command=lambda: pause(paused))
 stop_button = Button(controls_frame,
                      image=stop_button_img,
                      borderwidth=0,
@@ -85,5 +112,6 @@ root.config(menu=my_menu)
 add_song_menu = Menu(my_menu)
 my_menu.add_cascade(label="Add Songs", menu=add_song_menu)
 add_song_menu.add_command(label="Add one song to playist", command=add_song)
+add_song_menu.add_command(label="Add songs to playlist", command=add_songs)
 
 root.mainloop()
